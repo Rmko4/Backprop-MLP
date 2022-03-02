@@ -5,7 +5,7 @@ import sklearn.datasets
 import matplotlib.pyplot as plt
 
 N_FEATURES = 2
-HIDDEN_UNITS = [5]
+HIDDEN_UNITS = [20]
 N = 500
 
 
@@ -23,11 +23,11 @@ class MLP(keras.Sequential):
         self.add(keras.layers.Input((units_config[0],)))
 
         # A dense layer is added for the listed number units in each layer.
-        for n in units_config[1:]:
+        for n in units_config[1:-1]:
             # NOTE: Sigmoid for some reason does not work, not sure yet why
             self.add(keras.layers.Dense(n, activation='relu',
                                         kernel_initializer='glorot_uniform', bias_initializer='zeros'))
-        self.add(keras.layers.Dense(units_config[-1], activation=None,
+        self.add(keras.layers.Dense(units_config[-1], activation='sigmoid',
                                     kernel_initializer='glorot_uniform', bias_initializer='zeros'))
         # Sigmoid is applied to output layer to produce probability distribution (binary classification)
 
@@ -132,10 +132,10 @@ class MLP(keras.Sequential):
     def compile(self, automatic_differentiation=False, learning_rate=0.01, loss_weights=None, weighted_metrics=None,
                 run_eagerly=None, steps_per_execution=None, **kwargs):
         self.automatic_differentiation = automatic_differentiation
-        optimizer = keras.optimizers.SGD(learning_rate=learning_rate, momentum=0.9) # Without momentum the optimizer is hopelessly bad
+        optimizer = keras.optimizers.SGD(learning_rate=learning_rate, momentum=0) # Without momentum the optimizer is hopelessly bad
         # Only MSE is supported due to hard coded back propagation on MSE loss. TODO
-        # loss = keras.losses.BinaryCrossentropy(from_logits=True) NOTE: Binary crossentropy might be preferred due to binary class prediction.
-        loss = keras.losses.MeanSquaredError()
+        loss = keras.losses.BinaryCrossentropy(from_logits=False) #NOTE: Binary crossentropy might be preferred due to binary class prediction.
+        # loss = keras.losses.MeanSquaredError()
         metrics = [keras.metrics.BinaryAccuracy()]
         return super().compile(optimizer, loss, metrics, loss_weights,
                                weighted_metrics, run_eagerly, steps_per_execution, **kwargs)
@@ -159,7 +159,7 @@ def plot_data(X, Y):
 
 def main():
     u, y = load_data(N)
-    plot_data(u, y)
+    # plot_data(u, y)
 
     split_i = int(.8*N)
     u_train = u[:split_i]
