@@ -1,9 +1,11 @@
+# %% Imports
 import matplotlib.pyplot as plt
 import numpy as np
 import sklearn.metrics as metric
-from pathlib import Path
+import data
 
-path = Path("data")
+# %% Load data
+path = data.DEFAULT_PATH
 
 loss = np.load(path / "loss.npy")
 val_loss = np.load(path / "val_loss.npy")
@@ -11,7 +13,8 @@ bin_acc = np.load(path / "bin_acc.npy")
 val_bin_acc = np.load(path / "val_bin_acc.npy")
 epochs = np.load(path / "epochs.npy")
 
-def plot_fill(ax, data, color, label):
+# %%
+def plot_fill(ax: plt.Axes, data, color, label):
     mean_data = np.mean(data, axis=0)
     min_data = np.min(data, axis=0)
     max_data = np.max(data, axis=0)
@@ -19,6 +22,7 @@ def plot_fill(ax, data, color, label):
     ax.plot(epochs, mean_data, color=color, label=label)
     ax.fill_between(epochs, min_data, max_data, color=color, alpha=0.3, linewidth=0)
 
+# %% Plots data
 fig, ax1 = plt.subplots()
 ax2 = ax1.twinx()
 
@@ -38,6 +42,7 @@ ax1.set_ylabel("loss")
 ax2.set_ylabel("accuracy")
 plt.show()
 
+# %% Additional metrics
 test_true = np.load(path / "test_true.npy")
 test_pred = np.load(path / "test_pred.npy")
 
