@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 N_FEATURES = 2
 HIDDEN_UNITS = [5]
 N = 500
-RUNS = 2
+RUNS = 10
 
 
 RUN_EAGERLY = False
@@ -157,7 +157,7 @@ def plot_data(X, Y):
 def main():
     # plot_data(*load_data(N))
 
-    accuraccy = []
+    accuracy = []
     histories = []
     y_test_s = []
     y_test_pred_s = []
@@ -173,19 +173,30 @@ def main():
         mlp = MLP([N_FEATURES, *HIDDEN_UNITS, 1])
         mlp.compile(automatic_differentiation=False, learning_rate=0.01, run_eagerly=RUN_EAGERLY)
 
-        hist = mlp.fit(u_train, y_train, batch_size=1, epochs=3, validation_split=0.2)
+        hist = mlp.fit(u_train, y_train, batch_size=1, epochs=30, validation_split=0.2)
         histories.append(hist)
         y_test_pred = mlp.predict_class(u_test)
 
         y_test_s.append(y_test)
         y_test_pred_s.append(y_test_pred)
-        accuraccy.append(np.mean(y_test == y_test_pred, axis=0))
+        accuracy.append(np.mean(y_test == y_test_pred, axis=0))
 
     loss = np.array([x.history["loss"] for x in histories])
     val_loss = np.array([x.history["val_loss"] for x in histories])
+    bin_acc = np.array([x.history["binary_accuracy"] for x in histories])
+    val_bin_acc = np.array([x.history["val_binary_accuracy"] for x in histories])
 
-    print(np.mean(accuraccy))
-    print(np.std(accuraccy))
+    epochs = np.array(histories[0].epoch)
+    mean_loss = np.mean(loss, axis=0)
+    max_loss = np.max(loss, axis=0)
+    min_loss = np.min(loss, axis=0)
+    plt.plot(epochs, mean_loss)
+    plt.plot(epochs, min_loss)
+    plt.plot(epochs, max_loss)
+    plt.show()
+
+    print(np.mean(accuracy))
+    print(np.std(accuracy))
 
 
 if __name__ == "__main__":
