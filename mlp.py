@@ -1,3 +1,4 @@
+from cProfile import label
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
@@ -142,27 +143,39 @@ class MLP(keras.Sequential):
         return (y_pred > 0.5).reshape((-1,)).astype(np.int32)
 
 
-def load_data(N):
+def create_dataset(N):
     gq = sklearn.datasets.make_gaussian_quantiles(
         mean=None, cov=0.7, n_samples=N, n_features=2,
         n_classes=2, shuffle=True, random_state=None)
-    return gq
+    u, y = gq
+    np.save('u', u)    
+    np.save('y', y)    
 
+def load_data():
+    u = np.load('u.npy')
+    y = np.load('y.npy')
+    return u, y
 
-def plot_data(X, Y):
-    plt.scatter(X[:, 0], X[:, 1], marker="o", c=Y, s=25, edgecolor="k")
+def plot_data():
+    u, y = load_data()
+    fig, ax = plt.subplots()
+    scatter = ax.scatter(u[:, 0], u[:, 1], marker="o", c=y, s=25, edgecolor="k")
+    legend = ax.legend(*scatter.legend_elements(), title="Classes")
+    ax.add_artist(legend)
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title(f'Scatterplot of dataset | N={N}')
     plt.show()
 
-
 def main():
-    # plot_data(*load_data(N))
+    # plot_data(*load_data())
 
     accuraccy = []
     histories = []
     y_test_s = []
     y_test_pred_s = []
     for _ in range(RUNS):
-        u, y = load_data(N)
+        u, y = load_data()
 
         split_i = int(.8*N)
         u_train = u[:split_i]
@@ -189,4 +202,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    # create_dataset(N)
+    plot_data()
