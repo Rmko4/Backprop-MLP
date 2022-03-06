@@ -17,20 +17,24 @@ def create_dataset(N, save_path: Path = DEFAULT_FOLDER):
     return gq
 
 
-def load_data(path: Path = DEFAULT_FOLDER):
+def load_data(path: Path = DEFAULT_PATH):
     u = np.load(path / 'u.npy')
     y = np.load(path / 'y.npy')
     return u, y
 
 
-def plot_data(path: Path = DEFAULT_FOLDER):
+def plot_data(path: Path = DEFAULT_PATH):
     u, y = load_data(path)
-    fig, ax = plt.subplots()
-    scatter = ax.scatter(u[:, 0], u[:, 1], marker="o",
-                         c=y, s=25, edgecolor="k")
-    legend = ax.legend(*scatter.legend_elements(), title="Classes")
-    ax.add_artist(legend)
+    plt.figure(figsize=(4.5,3.5))
+    scatter = plt.scatter(u[:, 0], u[:, 1], marker="o",
+                         c=y, s=20, edgecolor="k")
+    legend = plt.legend(*scatter.legend_elements(), title="Classes")
+    plt.gca().add_artist(legend)
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
     plt.title(f'Scatterplot of dataset | N={len(y)}')
+    plt.tight_layout()
     plt.show()
+
+if __name__ == "__main__":
+    plot_data()

@@ -40,9 +40,13 @@ def save_history_data(histories, save_path: Path):
     np.save(save_path / "epochs", epochs)
 
 
-# %%
+# %% Create the data
 save_path = data.DEFAULT_PATH
 u, y = data.create_dataset(N_SAMPLES, save_path)
+
+# %% Plot the data
+save_path = data.DEFAULT_PATH
+data.plot_data(save_path)
 
 # %% Load data
 save_path = data.DEFAULT_PATH

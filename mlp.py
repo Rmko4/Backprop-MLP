@@ -1,4 +1,5 @@
-from typing import List, Tuple
+from typing import List
+
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
@@ -117,8 +118,8 @@ class MLP(keras.Sequential):
         # Return a dict mapping metric names to current value
         return {m.name: m.result() for m in self.metrics}
 
-    def compile(self, automatic_differentiation=False, learning_rate=0.02, loss_weights=None, weighted_metrics=None,
-                run_eagerly=None, steps_per_execution=None, **kwargs):
+    def compile(self, automatic_differentiation=False,
+                learning_rate=0.02, run_eagerly=None, **kwargs):
         self.automatic_differentiation = automatic_differentiation
         optimizer = keras.optimizers.SGD(learning_rate=learning_rate)
         # Only MSE is supported due to hard coded back propagation on MSE loss. TODO
@@ -126,8 +127,7 @@ class MLP(keras.Sequential):
         loss = keras.losses.BinaryCrossentropy(from_logits=False)
         # loss = keras.losses.MeanSquaredError()
         metrics = [keras.metrics.BinaryAccuracy()]
-        return super().compile(optimizer, loss, metrics, loss_weights,
-                               weighted_metrics, run_eagerly, steps_per_execution, **kwargs)
+        return super().compile(optimizer, loss, metrics, run_eagerly, **kwargs)
 
     def predict_class(self, x, **kwargs):
         y_pred = self.predict(x, **kwargs)
