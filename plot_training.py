@@ -4,6 +4,13 @@ import numpy as np
 import sklearn.metrics as metric
 import data
 
+# %% Requires TeX
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "serif",
+    "font.size": 12,
+    "font.serif": ["Computer Modern Roman"]})
+
 # %% Load data
 path = data.DEFAULT_PATH
 
@@ -23,7 +30,7 @@ def plot_fill(ax: plt.Axes, data, color, label):
     ax.fill_between(epochs, min_data, max_data, color=color, alpha=0.3, linewidth=0)
 
 # %% Plots data
-fig, ax1 = plt.subplots()
+fig, ax1 = plt.subplots(figsize=(4.4,3.4))
 ax2 = ax1.twinx()
 
 plot_fill(ax1, loss, 'tab:red', 'loss')
@@ -40,6 +47,7 @@ ax2.legend(lines + lines2, labels + labels2, loc=7)
 ax1.set_xlabel("epoch")
 ax1.set_ylabel("loss")
 ax2.set_ylabel("accuracy")
+plt.tight_layout()
 plt.show()
 
 # %% Additional metrics

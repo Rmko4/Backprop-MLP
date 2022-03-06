@@ -23,18 +23,25 @@ def load_data(path: Path = DEFAULT_PATH):
     return u, y
 
 
-def plot_data(path: Path = DEFAULT_PATH):
+def plot_data(path: Path = DEFAULT_PATH, print_title=False):
     u, y = load_data(path)
-    plt.figure(figsize=(4.5,3.5))
+    plt.figure(figsize=(4.4,3.4))
     scatter = plt.scatter(u[:, 0], u[:, 1], marker="o",
                          c=y, s=20, edgecolor="k")
     legend = plt.legend(*scatter.legend_elements(), title="Classes")
     plt.gca().add_artist(legend)
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
-    plt.title(f'Scatterplot of dataset | N={len(y)}')
+    if print_title:
+        plt.title(f'Scatterplot of dataset | N={len(y)}')
     plt.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
+    # %% Requires TeX
+    plt.rcParams.update({
+        "text.usetex": True,
+        "font.family": "serif",
+        "font.size": 12,
+        "font.serif": ["Computer Modern Roman"]})
     plot_data()

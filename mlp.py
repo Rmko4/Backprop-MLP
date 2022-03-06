@@ -127,6 +127,7 @@ class MLP(keras.Sequential):
         loss = keras.losses.BinaryCrossentropy(from_logits=False)
         # loss = keras.losses.MeanSquaredError()
         metrics = [keras.metrics.BinaryAccuracy()]
+        run_eagerly = None if run_eagerly == False else run_eagerly
         return super().compile(optimizer, loss, metrics, run_eagerly, **kwargs)
 
     def predict_class(self, x, **kwargs):

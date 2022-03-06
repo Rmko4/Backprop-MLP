@@ -20,16 +20,13 @@ AUTO_DIFF = False
 RUN_EAGERLY = False
 
 
-
 # %%
-
-
 def save_history_data(histories, save_path: Path):
     loss = np.array([x.history["loss"] for x in histories])
     val_loss = np.array([x.history["val_loss"] for x in histories])
     bin_acc = np.array([x.history["binary_accuracy"] for x in histories])
     val_bin_acc = np.array([x.history["val_binary_accuracy"]
-                           for x in histories])
+                            for x in histories])
 
     epochs = np.array(histories[0].epoch)
 
