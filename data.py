@@ -9,7 +9,7 @@ DEFAULT_PATH = Path(DEFAULT_FOLDER)
 def create_dataset(N, save_path: Path = DEFAULT_FOLDER):
     gq = mgq(
         mean=None, cov=0.7, n_samples=N, n_features=2,
-        n_classes=4, shuffle=True, random_state=None)
+        n_classes=2, shuffle=True, random_state=None)
     u, y = gq
     if save_path:
         np.save(save_path / 'u', u)
