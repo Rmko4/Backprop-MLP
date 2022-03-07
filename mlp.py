@@ -26,9 +26,8 @@ class MLP(keras.Sequential):
 
         self.summary()
 
-    # Implementation of the train step function for a batch of data.
-
     def train_step(self, data):
+        # Implementation of the train step function for a batch of data.
         if self.automatic_differentiation:
             return super().train_step(data)
         # Unpack the data. Its structure depends on your model and
@@ -52,9 +51,6 @@ class MLP(keras.Sequential):
 
         theta = self.trainable_variables
 
-        def d_dypred_MSE(y_true, y_pred):
-            return 2 * (y_true - y_pred)
-
         def d_dypred_binary_crossentropy(y_true, y_pred):
             eps = keras.backend.epsilon()
             return (1 - y_true) / (1 - y_pred + eps) - (y_true / y_pred + eps)
@@ -67,8 +63,6 @@ class MLP(keras.Sequential):
 
         # Compute deltas for last layer
         d_dx_loss = d_dypred_binary_crossentropy(y, X[-1])
-        # if tf.math.is_nan(d_dx_loss)[0]:
-        #     tf.print(d_dx_loss)
         delta_k = d_dx_loss * d_dx_sigmoid(X[-1])
         deltas.append(delta_k)
 
@@ -100,14 +94,6 @@ class MLP(keras.Sequential):
             bias_gradient = tf.reduce_mean(bias_gradient, axis=0)
             theta_gradient.append(bias_gradient)
 
-        with tf.GradientTape() as tape:
-            y_pred = self(u, training=True)  # Forward pass of the MLP
-
-            # Compute the loss values
-            # (the loss function is configured in `compile()`)
-            loss = self.compiled_loss(y, y_pred)
-
-        gradients = tape.gradient(loss, theta)
         # Update weights by providing the optimizer (SGD) with the gradient.
         self.optimizer.apply_gradients(zip(theta_gradient, theta))
 
@@ -121,11 +107,10 @@ class MLP(keras.Sequential):
     def compile(self, automatic_differentiation=False,
                 learning_rate=0.02, run_eagerly=None, **kwargs):
         self.automatic_differentiation = automatic_differentiation
+        # Stochastic Gradient Descent
         optimizer = keras.optimizers.SGD(learning_rate=learning_rate)
-        # Only MSE is supported due to hard coded back propagation on MSE loss. TODO
-        # NOTE: Binary crossentropy might be preferred due to binary class prediction.
+        # Binary Cross Entropy
         loss = keras.losses.BinaryCrossentropy(from_logits=False)
-        # loss = keras.losses.MeanSquaredError()
         metrics = [keras.metrics.BinaryAccuracy()]
         run_eagerly = None if run_eagerly == False else run_eagerly
         return super().compile(optimizer, loss, metrics, run_eagerly, **kwargs)
